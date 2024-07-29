@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: "@artifactId@"
+  cloud:
+    nacos:
+      config:
+        server-addr: @nacos.addr@ #自动取pom中的addr
+        namespace: @profiles.active@ #自动取pom中的namespace
+        username: @nacos.namespace@
+        password: @nacos.password@
+        file-extension: @file.extension@
+        shared-configs: #公共配置
+          - data-id: @shared.name@

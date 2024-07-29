@@ -1,0 +1,102 @@
+#server:
+#  port: 10010
+#spring:
+#  cloud: #注册到Nacos
+#    nacos:
+#      discovery:
+#        server-addr: 192.168.169.129
+#        username: nacos
+#        password: nacos
+#    gateway:
+#      httpclient:
+#        connect-timeout: 10000
+#        response-timeout: 10000 # 超时时间
+#      discovery:
+#        locator:
+#          enabled: false # 开启自动路由
+#          lower-case-service-id: true #服务名小写
+#      routes: #路由配置
+#        - id: it-akacar-bigdata #指定服务名
+#          uri: lb://it-akacar-service-bigdata
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/bigdata/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-common #指定服务名
+#          uri: lb://it-akacar-service-common
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/common/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-order #指定服务名
+#          uri: lb://it-akacar-service-order
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/order/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-coustomer #指定服务名
+#          uri: lb://it-akacar-service-customer
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/customer/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-uaa #指定服务名
+#          uri: lb://it-akacar-service-uaa
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/uaa/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-driver #指定服务名
+#          uri: lb://it-akacar-service-driver
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/driver/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-pay #指定服务名
+#          uri: lb://it-akacar-service-pay
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/pay/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#        - id: it-akacar-system #指定服务名
+#          uri: lb://it-akacar-service-system
+#          #去注册中心找这个服务名
+#          predicates: #断言，匹配访问的路径
+#            - Path=/akacar/system/**    #服务访问路径
+#          filters:
+#            - StripPrefix=2
+#      globalcors: #跨域配置
+#        cors-configurations:
+#          '[/**]':
+#            allowedOriginPatterns: "*"
+#            allow-credentials: true
+#            allowed-headers: "*"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - DELETE
+#              - PUT
+#              - PATCH
+#              - OPTIONS
+#              - HEAD
+#              - CONNECT
+#              - TRACE
+
+#knife4j:
+#  gateway:
+#    # ① 第一个配置，开启gateway聚合组件
+#    enabled: true
+#    # ② 第二行配置，设置聚合模式采用discover服务发现的模式
+#    strategy: discover
+#    discover:
+#      # ③ 第三行配置，开启discover模式
+#      enabled: true
+#      # ④ 第四行配置，聚合子服务全部为Swagger2规范的文档
+#      version: OpenAPI3
