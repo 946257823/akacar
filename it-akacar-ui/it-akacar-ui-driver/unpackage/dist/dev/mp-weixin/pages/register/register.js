@@ -158,7 +158,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(uni, wx) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -258,10 +258,93 @@ var _default = {
       cityName: "未知"
     };
   },
-  onLoad: function onLoad() {},
-  methods: {}
+  // 一个页面只调一次
+  onLoad: function onLoad() {
+    // 在函数中有时this的指向会变，变为不是Vue实例对象，所有先保存一份this实例
+    var _this = this;
+    _this.initQQMap();
+    var location = _this.getLocation();
+    _this.reverseGeocoder();
+  },
+  // 页面展示一次加载一次
+  // onShow() {
+
+  // },
+  // // 页面跳转时触发
+  // onUnload() {
+
+  // },
+  methods: {
+    // 1.获取经纬度信息
+    getLocation: function getLocation() {
+      uni.getLocation({
+        type: 'wgs84',
+        success: function success(res) {
+          console.log('当前位置的经度：' + res.longitude);
+          console.log('当前位置的纬度：' + res.latitude);
+          return res;
+        }
+      });
+    },
+    initQQMap: function initQQMap() {
+      qqmapsdk = new QQMapWX({
+        key: 'AFYBZ-7L3CZ-D5MXS-Z66W3-BXG4V-YEBFY'
+      });
+    },
+    // 地址逆向解析
+    reverseGeocoder: function reverseGeocoder(location) {
+      var _this = this;
+      qqmapsdk.reverseGeocoder({
+        location: location,
+        success: function success(res) {
+          if (res.status == 0) {
+            _this.cityName = res.result.address_component.city;
+          } else {
+            uni.showToast({
+              icon: "error",
+              title: "获取地址失败！"
+            });
+          }
+        }
+      });
+    },
+    // 获取登录openId
+    wxRegister: function wxRegister() {
+      var _this = this;
+      wx.login({
+        success: function success(res) {
+          if (res.code) {
+            _this.get("/driver/app/driver/register/" + res.code, function (resp) {
+              if (resp.success) {
+                uni.showToast({
+                  icon: "success",
+                  title: "注册成功!",
+                  duration: 5000
+                });
+
+                // 设置一个3000毫秒后执行的定时器
+                setTimeout(function () {
+                  uni.navigateTo({
+                    url: "/pages/login/login"
+                  });
+                }, 3000);
+              } else {
+                uni.showToast({
+                  icon: "error",
+                  title: resp.message
+                });
+              }
+            });
+          } else {
+            console.log('登录失败！' + res.errMsg);
+          }
+        }
+      });
+    }
+  }
 };
 exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"]))
 
 /***/ }),
 

@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IDriverService extends IService<Driver> {
 
+    void register(String openIdCode);
 }

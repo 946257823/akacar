@@ -158,7 +158,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(uni) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -185,10 +185,17 @@ var _default = {
   data: function data() {
     return {};
   },
-  methods: {},
+  methods: {
+    toRegisterPage: function toRegisterPage() {
+      uni.navigateTo({
+        url: '/pages/register/register'
+      });
+    }
+  },
   onLoad: function onLoad() {}
 };
 exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
 
 /***/ }),
 

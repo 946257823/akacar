@@ -23,7 +23,11 @@ export default {
 		return {};
 	},
 	methods: {
-		
+		toRegisterPage() {
+			uni.navigateTo({
+				url:'/pages/register/register'
+			})
+		}
 	},
 	onLoad: function() {
 	}
