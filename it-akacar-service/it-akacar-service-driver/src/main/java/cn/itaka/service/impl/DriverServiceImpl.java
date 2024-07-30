@@ -49,8 +49,6 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
 
     @Autowired
     private IDriverSummaryService iDriverSummaryService;
-
-
     /**
      *
      * @param openIdCode
@@ -62,7 +60,6 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
         // 1.参数校验
         // 2.业务校验
         // 3.业务实现
-
         // 1. 先根据openIdCode拿到OpenId
         String urltemplate = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
         String url = String.format(urltemplate,"wx15ecfcee13cde076","8e78f62669f0c67a82220cddb813e365",openIdCode);
@@ -77,7 +74,6 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
 //        if (StrUtil.isBlank(codeToOpenIdDto.getOpenid())) {
 //            throw new GlobalException(GlobalExceptionCode.PARAM_CODE_ERROR);
 //        }
-
         String openId = codeToOpenIdDto.getOpenid();
         // 获取到openId之后，去数据库查看司机账号是否已经注册
         Driver driver = super.getOne(new QueryWrapper<Driver>().eq("open_id", openId));
@@ -90,7 +86,6 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
         // 3.1 保存driver信息
         driver = new Driver();
         saveDriver(driver,openId);
-
         Long id = driver.getId();
         // 3.2 初始化从表
         initDriverAssociation(id);

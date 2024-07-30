@@ -321,7 +321,6 @@ var _default = {
                   title: "注册成功!",
                   duration: 5000
                 });
-
                 // 设置一个3000毫秒后执行的定时器
                 setTimeout(function () {
                   uni.navigateTo({

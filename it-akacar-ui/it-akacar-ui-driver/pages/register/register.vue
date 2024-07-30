@@ -102,10 +102,7 @@ export default {
 		let location = _this.getLocation();
 		
 		_this.reverseGeocoder();
-		
-		
-		
-		
+
 	},
 	// 页面展示一次加载一次
 	// onShow() {
@@ -164,7 +161,6 @@ export default {
 									title:"注册成功!",
 									duration:5000
 								})
-								
 								// 设置一个3000毫秒后执行的定时器
 								setTimeout(function() {
 								    uni.navigateTo({
@@ -178,7 +174,6 @@ export default {
 								})
 							}
 						})
-					
 					}else {
 						console.log('登录失败！' + res.errMsg)
 					}

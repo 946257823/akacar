@@ -1,22 +1,13 @@
-package cn.itaka.controller.manager;
+package cn.itaka.controller.app;
 
 import cn.itaka.service.IDriverService;
-import cn.itaka.pojo.domain.Driver;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import cn.itaka.pojo.query.PageQueryWrapper;
 import cn.itaka.result.R;
-import cn.itaka.result.PageResult;
 
-import java.util.List;
 
 @Tag(name = "小程序司机对象",description = "小程序司机对象")
 @RestController
@@ -25,8 +16,6 @@ public class AppDriverController{
 
     @Autowired
     public IDriverService driverService;
-
-
     /**
      * 小程序司机注册
      * @param openIdCode
@@ -39,7 +28,4 @@ public class AppDriverController{
         driverService.register(openIdCode);
         return R.success();
     }
-
-
-
 }
