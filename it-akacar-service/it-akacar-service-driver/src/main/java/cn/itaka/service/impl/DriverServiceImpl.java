@@ -70,18 +70,18 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
         CodeToOpenIdDto codeToOpenIdDto = JsonToClassUtil.objJsonStr2Class(jsonResultStr, CodeToOpenIdDto.class);
         // if判断如果是抛异常，可以使用断言工具类
         // 希望在不空的时候抛异常
-        AssertUtil.isNotEmpty(codeToOpenIdDto.getOpenid(),GlobalExceptionCode.PARAM_CODE_ERROR);
-//        if (StrUtil.isBlank(codeToOpenIdDto.getOpenid())) {
-//            throw new GlobalException(GlobalExceptionCode.PARAM_CODE_ERROR);
-//        }
+//        AssertUtil.isNotEmpty(codeToOpenIdDto.getOpenid(),GlobalExceptionCode.PARAM_CODE_ERROR);
+        if (StrUtil.isBlank(codeToOpenIdDto.getOpenid())) {
+            throw new GlobalException(GlobalExceptionCode.PARAM_CODE_ERROR);
+        }
         String openId = codeToOpenIdDto.getOpenid();
         // 获取到openId之后，去数据库查看司机账号是否已经注册
         Driver driver = super.getOne(new QueryWrapper<Driver>().eq("open_id", openId));
 
-        AssertUtil.isNotNull(driver,GlobalExceptionCode.PARAM_PHONE_EXIST);
-//        if (ObjectUtil.isNotEmpty(driver)) {
-//            throw new GlobalException(GlobalExceptionCode.PARAM_PHONE_EXIST);
-//        }
+//        AssertUtil.isNotNull(driver,GlobalExceptionCode.PARAM_PHONE_EXIST);
+        if (ObjectUtil.isNotEmpty(driver)) {
+            throw new GlobalException(GlobalExceptionCode.PARAM_PHONE_EXIST);
+        }
         // 3 业务实现
         // 3.1 保存driver信息
         driver = new Driver();
