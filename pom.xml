@@ -168,6 +168,19 @@
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>${logstash.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>cn.akacar</groupId>
+                <artifactId>it-akacar-starter-wechat</artifactId>
+                <version>${akacar-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.akacar</groupId>
+                <artifactId>it-akacar-api-uaa</artifactId>
+                <version>${akacar-version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <profiles>
@@ -182,6 +195,7 @@
                 <nacos.password>nacos</nacos.password>
                 <file.extension>yml</file.extension>
                 <shared.name>it-akacar-shard.yaml</shared.name>
+                <shared.datasource.name>it-akacar-shard-datasource.yaml</shared.datasource.name>
             </properties>
         </profile>
         <profile>

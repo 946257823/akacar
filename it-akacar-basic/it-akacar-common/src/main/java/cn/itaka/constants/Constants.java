@@ -16,6 +16,14 @@ public class Constants {
     public static final Integer SEX_WOMAN = 0;
     public static final Integer SEX_MAN = 1;
 
+    public static final String appid = "wx15ecfcee13cde076";
+    public static final String secret = "8e78f62669f0c67a82220cddb813e365";
+    public class Url {
+        public static final String CODE_TO_OPENID_URL_TEMPLATE = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+        public static final String ACCESS_TOKEN_URL_TEMPLATE = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
+        public static final String CODE_TO_PHONE_URL_TEMPLATE = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=%s";
+    }
+
     public class RealAuth {
         // 等级0青铜,1白银，2黄金,3白金,4大师,5宗师,6王者
         public static final Integer VERIFYING = 0;
@@ -52,6 +60,10 @@ public class Constants {
     public class Remote {
         //服务名
         public static final String SERVICE_UAA = "it-akacar-service-uaa";
+
+        public static final String SERVICE_DRIVER = "it-akacar-service-driver";
+
+        public static final String SERVICE_CUSTOMER = "it-akacar-service-customer";
 
         public static final String PREFIX_LOGIN_REMOTE = "/login/remote";
     }

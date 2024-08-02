@@ -65,3 +65,7 @@
 #    enable: true
 #    username: akacar
 #    password: akacar
+
+#feign:
+#  sentinel:
+#    enabled: true

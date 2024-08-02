@@ -21,9 +21,11 @@ public class AppDriverController{
      * @param openIdCode
      * @return
      */
+//    @GetMapping("/register/{openIdCode}/{phoneCode}")
     @GetMapping("/register/{openIdCode}")
     @Operation(summary = "小程序司机注册", description = "小程序司机注册接口")
     @Parameter(name = "openIdCode", description = "获取openIdCode", required = true)
+//    public R<Void> register(@PathVariable String openIdCode, @PathVariable String phoneCode) {
     public R<Void> register(@PathVariable String openIdCode) {
         driverService.register(openIdCode);
         return R.success();

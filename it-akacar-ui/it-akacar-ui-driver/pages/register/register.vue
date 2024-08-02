@@ -77,7 +77,7 @@
 			</view>
 		</view>
 		<button class="btn" @tap="wxRegister()" >司机注册</button>
-		<!-- <button class="btn" open-type="getPhoneNumber" @getphonenumber="phoneRegister" >司机注册</button> -->
+<!-- 		<button class="btn" open-type="getPhoneNumber" @getphonenumber="phoneRegister" >司机注册</button> -->
 		<u-toast ref="uToast" />
 	</view>
 </template>
@@ -159,7 +159,40 @@ export default {
 								uni.showToast({
 									icon:"success",
 									title:"注册成功!",
-									duration:5000
+									duration:2000
+								})
+								// 设置一个3000毫秒后执行的定时器
+								setTimeout(function() {
+								    uni.navigateTo({
+								    	url:"/pages/login/login"
+								    })
+								}, 3000);
+							}else {
+								uni.showToast({
+									icon:"error",
+									title:resp.message,
+								})
+							}
+						})
+					}else {
+						console.log('登录失败！' + res.errMsg)
+					}
+				}
+			})
+		},
+		// 获取手机号
+		phoneRegister(e) {
+			const _this = this;
+			let phoneCode = e.detail.code
+			wx.login({
+				success(res) {
+					if(res.code && phoneCode) {
+						_this.get("/driver/app/driver/register/" + res.code + "/" + phoneCode,(resp) => {
+							if(resp.success) {
+								uni.showToast({
+									icon:"success",
+									title:"注册成功!",
+									duration:2000
 								})
 								// 设置一个3000毫秒后执行的定时器
 								setTimeout(function() {

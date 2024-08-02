@@ -66,8 +66,8 @@
 				</view>
 			</view>
 		</view>
-		<!-- <button class="btn" @tap="wxLogin" >司机注册</button> -->
-		<button class="btn" open-type="getPhoneNumber" @getphonenumber="phoneRegister" >微信注册</button>
+		<button class="btn" @tap="wxRegister()" >用户注册</button>
+	<!-- 	<button class="btn" open-type="getPhoneNumber" @getphonenumber="phoneRegister" >微信注册</button> -->
 		<u-toast ref="uToast" />
 	</view>
 </template>
@@ -79,16 +79,123 @@ export default {
 	data() {
 		return {
 			code: null,
-			cityName:"成都"
+			cityName:"未知"
 		};
 	},
 	onLoad(){
-		let _this = this;
+		// 一个页面只调一次
+
+		// 在函数中有时this的指向会变，变为不是Vue实例对象，所有先保存一份this实例
+		const _this = this;
+		
+		_this.initQQMap();
+				
+		let location = _this.getLocation();
+		
+		_this.reverseGeocoder();
 	
 	},
 	methods: {
+		// 1.获取经纬度信息
+		getLocation() {
+			uni.getLocation({
+				type: 'wgs84',
+				success: function (res) {
+					console.log('当前位置的经度：' + res.longitude);
+					console.log('当前位置的纬度：' + res.latitude);
+					return res;
+				}
+			})
+		},
+		initQQMap() {
+			qqmapsdk = new QQMapWX({
+			    key: 'AFYBZ-7L3CZ-D5MXS-Z66W3-BXG4V-YEBFY'
+			})
+		},
 		
+		// 地址逆向解析
+		reverseGeocoder(location) {
+			const _this = this;
+			qqmapsdk.reverseGeocoder({
+				location:location,
+				success: function(res) {
+					if(res.status == 0) {
+						_this.cityName = res.result.address_component.city;
+					}else {
+						uni.showToast({
+							icon:"error",
+							title:"获取地址失败！"
+						})
+					}
+				}
+			})
+		},
 		
+		// 获取登录openId
+		wxRegister() {
+			const _this = this;
+			wx.login({
+				success(res) {
+					if(res.code) {
+						_this.get("/customer/app/customer/register/" + res.code,(resp) => {
+							if(resp.success) {
+								uni.showToast({
+									icon:"success",
+									title:"注册成功!",
+									duration:2000
+								})
+								// 设置一个3000毫秒后执行的定时器
+								setTimeout(function() {
+								    uni.navigateTo({
+								    	url:"/pages/login/login"
+								    })
+								}, 3000);
+							}else {
+								uni.showToast({
+									icon:"error",
+									title:resp.message,
+								})
+							}
+						})
+					}else {
+						console.log('登录失败！' + res.errMsg)
+					}
+				}
+			})
+		},
+		// 获取手机号
+		phoneRegister(e) {
+			const _this = this;
+			let phoneCode = e.detail.code
+			wx.login({
+				success(res) {
+					if(res.code && phoneCode) {
+						_this.get("/customer/app/customer/register/" + res.code + "/" + phoneCode,(resp) => {
+							if(resp.success) {
+								uni.showToast({
+									icon:"success",
+									title:"注册成功!",
+									duration:2000
+								})
+								// 设置一个3000毫秒后执行的定时器
+								setTimeout(function() {
+								    uni.navigateTo({
+								    	url:"/pages/login/login"
+								    })
+								}, 3000);
+							}else {
+								uni.showToast({
+									icon:"error",
+									title:resp.message,
+								})
+							}
+						})
+					}else {
+						console.log('登录失败！' + res.errMsg)
+					}
+				}
+			})
+		}
 	}
 };
 </script>

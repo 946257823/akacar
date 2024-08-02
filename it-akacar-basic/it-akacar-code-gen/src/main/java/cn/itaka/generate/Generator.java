@@ -68,15 +68,12 @@ public class Generator {
         strategy.setTablePrefix(new String[] { "t_" });// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
 
+        // 中间表 & undo_log不要生成
         strategy.setInclude(new String[]{
-                "t_driver",
-                "t_driver_aggrement",
-                "t_driver_auth_material",
-                "t_driver_material_auth_log",
-                "t_driver_setting",
-                "t_driver_summary",
-                "t_driver_wallet",
-                "t_driver_wallet_flow"
+                "t_login",
+                "t_menu",
+                "t_permission",
+                "t_role"
         }); // 需要生成的表
 
         //使用lombok

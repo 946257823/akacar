@@ -97,6 +97,16 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-starter-wechat</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-api-uaa</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

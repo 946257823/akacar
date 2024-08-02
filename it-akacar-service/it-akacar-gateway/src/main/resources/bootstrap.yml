@@ -1,6 +1,8 @@
 spring:
   application:
     name: "@artifactId@"
+  main:
+    web-application-type: reactive
   cloud:
     nacos:
       config:
@@ -11,3 +13,4 @@ spring:
         file-extension: @file.extension@
         shared-configs: #公共配置
           - data-id: @shared.name@
+#          - data-id: @shared.datasource.name@
