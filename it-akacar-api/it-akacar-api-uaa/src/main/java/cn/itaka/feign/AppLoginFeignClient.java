@@ -8,8 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-@FeignClient(value = Constants.Remote.SERVICE_UAA, path = "/app/login", contextId = "AppLoginFeignClient", fallbackFactory = AppLoginFeignClientFallbackFactory.class)
+@FeignClient(value = Constants.Remote.SERVICE_UAA, path = "/app/login", contextId = "AppLoginFeignClient", fallbackFactory =  AppLoginFeignClientFallbackFactory.class)
 public interface AppLoginFeignClient {
     @PostMapping
     R<Void> save(@RequestBody RegisterSaveLoginParam registerSaveLoginParam);

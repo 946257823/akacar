@@ -1,5 +1,9 @@
 package cn.itaka.controller.manager;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
+import cn.itaka.pojo.dto.AdminLoginDto;
+import cn.itaka.pojo.vo.LoginVo;
 import cn.itaka.service.ILoginService;
 import cn.itaka.pojo.domain.Login;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,6 +27,15 @@ public class LoginController{
 
     @Autowired
     public ILoginService loginService;
+
+    @Operation( summary= "后台登录",description = "后台登录接口")
+    @PostMapping("/wxLogin/{code}/{type}")
+    @SaIgnore
+//    @SaCheckPermission("login:login")
+    public R<LoginVo> wxLogin(@RequestBody @Valid AdminLoginDto adminLoginDto){
+        return R.success(loginService.adminLogin(adminLoginDto));
+    }
+
 
     @Operation( summary= "保存Login",description = "基础对象保存接口")
     @Parameter(name = "login",description = "保存的对象",required = true)
@@ -50,6 +63,7 @@ public class LoginController{
     @Operation( summary= "获取Login",description = "基础对象获取接口")
     @Parameter(name = "id",description = "查询的对象ID",required = true)
     @GetMapping(value = "/{id}")
+    @SaCheckPermission("LOGIN:GET")
     public R<Login> get(@PathVariable("id")Long id){
         return R.success(loginService.getById(id));
     }

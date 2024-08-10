@@ -1,5 +1,6 @@
 package cn.itaka.controller.manager;
 
+import cn.itaka.pojo.dto.DriverRealAuthAuditDto;
 import cn.itaka.service.IDriverAuthMaterialService;
 import cn.itaka.pojo.domain.DriverAuthMaterial;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,6 +24,15 @@ public class DriverAuthMaterialController{
 
     @Autowired
     public IDriverAuthMaterialService driverAuthMaterialService;
+
+    @Operation( summary= "司机实名认证审核",description = "司机实名认证审核接口")
+    @Parameter(name = "driverRealAuthAuditDto",description = "审核对象",required = true)
+    @PostMapping("/realauth/audit")
+    public R<Void> realAuthAudit(@RequestBody @Valid DriverRealAuthAuditDto driverRealAuthAuditDto){
+        driverAuthMaterialService.realAuthAudit(driverRealAuthAuditDto);
+        return R.success("司机实名认证审核");
+    }
+
 
     @Operation( summary= "保存DriverAuthMaterial",description = "基础对象保存接口")
     @Parameter(name = "driverAuthMaterial",description = "保存的对象",required = true)

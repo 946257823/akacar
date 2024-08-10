@@ -13,6 +13,12 @@
         <module>it-akacar-service</module>
         <module>it-akacar-starter</module>
         <module>it-akacar-api</module>
+        <module>it-akacar-starter/it-akacar-starter-redis</module>
+        <module>it-akacar-starter/it-akacar-start-satoken</module>
+        <module>it-akacar-service/it-akacar-service-common</module>
+        <module>it-akacar-service/it-akacar-service-admin</module>
+        <module>it-akacar-service/it-akacar-service-order</module>
+        <module>it-akacar-service/it-akacar-service-rule</module>
     </modules>
 
     <properties>
@@ -44,6 +50,8 @@
         <rocketmq-version>2.2.3</rocketmq-version>
         <redisson-version>3.16.1</redisson-version>
         <hbase-version>5.0.0-HBase-2.0</hbase-version>
+        <sa-token-version>1.38.0</sa-token-version>
+
     </properties>
 
 
@@ -180,6 +188,38 @@
                 <artifactId>it-akacar-api-uaa</artifactId>
                 <version>${akacar-version}</version>
             </dependency>
+
+            <!-- Sa-Token 权限认证，在线文档：https://sa-token.cc -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-boot-starter</artifactId>
+                <version>${sa-token-version}</version>
+            </dependency>
+            <!-- Sa-Token 整合 Redis （使用 jackson 序列化方式） -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-redis-jackson</artifactId>
+                <version>${sa-token-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.akacar</groupId>
+                <artifactId>it-akacar-starter-redis</artifactId>
+                <version>${akacar-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.qcloud</groupId>
+                <artifactId>cos_api</artifactId>
+                <version>${cos.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.akacar</groupId>
+                <artifactId>it-akacar-start-file</artifactId>
+                <version>${akacar-version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

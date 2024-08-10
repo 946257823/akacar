@@ -140,13 +140,14 @@
           <el-tag v-if="scope.row.realAuthStatus === 0" type="info">待审核</el-tag>
           <el-tag v-if="scope.row.realAuthStatus === 1" type="success">已认证</el-tag>
           <el-tag v-if="scope.row.realAuthStatus === 2" type="danger">已驳回</el-tag>
+          <el-tag v-if="scope.row.realAuthStatus === 3" type="danger">已撤销</el-tag>
         </template>
       </el-table-column>
 
       <el-table-column prop="realAuthStatus" header-align="center" align="center" min-width="100" label="司机状态" >
         <template #default="scope" >
           <el-tag v-if="scope.row.realAuthStatus === 1" type="success">启用</el-tag>
-          <el-tag v-if="scope.row.realAuthStatus === 0 || scope.row.realAuthStatus === 2" type="danger">禁用</el-tag>
+          <el-tag v-if="scope.row.realAuthStatus === 0 || scope.row.realAuthStatus === 2 || scope.row.realAuthStatus === 3" type="danger">禁用</el-tag>
         </template>
       </el-table-column>
 			<el-table-column header-align="center" align="center" width="250" label="操作">
@@ -271,7 +272,7 @@ export default {
 	methods: {
     updateDriverStatus(driverMaterialId){
       this.$confirm("确定要修改司机状态？").then(()=>{
-        this.sendPost("/driver/driver/changestatus/"+driverMaterialId,(res)=>{
+        this.sendPost("/driver/manager/driver/changestatus/"+driverMaterialId,(res)=>{
           let {success,message,result} = res;
           if(success){
             this.$message({ message: '修改成功', type: 'success', duration: 1200 });
@@ -291,7 +292,7 @@ export default {
         approve: true  //是否统一
       }
       //实名审核
-      _this.post("/driver/driver/realauth/cancel",param,(res)=>{
+      _this.post("/driver/manager/driver/realauth/cancel",param,(res)=>{
         let {success, message} = res;
         console.log(res);
         if(success){
@@ -312,7 +313,7 @@ export default {
         approve: approve  //是否统一
       }
       //实名审核
-      _this.post("/driver/driver/realauth/audit",param,(res)=>{
+      _this.post("/driver/manager/driverAuthMaterial/realauth/audit",param,(res)=>{
         let {success, message} = res;
         console.log(res);
         if(success){
@@ -357,7 +358,7 @@ export default {
           _this.searchForm.query[prop] = null;
         }
       }
-      _this.post("/driver/driverAuthMaterial/pagelist",_this.searchForm,(res)=>{
+      _this.post("/driver/manager/driverAuthMaterial/pagelist",_this.searchForm,(res)=>{
         let {success,data} = res;
         if(success){
           _this.totalCount = data.total;

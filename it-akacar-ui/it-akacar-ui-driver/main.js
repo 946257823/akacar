@@ -78,18 +78,25 @@ function sendRequest(url,method,sendData,callBack){
 	
 	//uni.showLoading({ title: "请求中..." })
 
+	const tokenName = uni.getStorageSync("tokenName");
+	const tokenValue = uni.getStorageSync("tokenValue");
+	
+	let header = {}
+	
+	if(tokenName && tokenValue) {
+		header[tokenName] = tokenValue  
+	}
 	
 	uni.request({
 		"url": baseUrl+url,
 		"method": method,
-		"header": {
-			satoken: uni.getStorageSync("tokenValue")
-		},
+		"header": header,  // 在前面定义好header，后端传过来的tokenName是啥就是啥
 		"data": sendData,
 		success: function(resp) {
 			
 			if (resp.statusCode == 401) {
 				uni.redirectTo({
+					
 					url: "/pages/login/login.vue"
 				})
 			} else if (resp.statusCode == 200 && resp.data.code == 200) {

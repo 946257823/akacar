@@ -1,6 +1,7 @@
 package cn.itaka.service;
 
 import cn.itaka.pojo.domain.CustomerCar;
+import cn.itaka.pojo.domain.dto.CarDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICustomerCarService extends IService<CustomerCar> {
 
+    void addCar(CarDto carDto);
 }

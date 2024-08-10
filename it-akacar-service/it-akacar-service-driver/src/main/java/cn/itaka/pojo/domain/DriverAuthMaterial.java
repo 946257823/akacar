@@ -1,18 +1,16 @@
 package cn.itaka.pojo.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotation.Version;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -51,6 +49,7 @@ public class DriverAuthMaterial implements Serializable {
 
     @Schema(name = "birthday", description = "生日")
     @TableField("birthday")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date birthday;
 
     @Schema(name = "realAuthStatus", description = "认证状态: 0-审核中 1-审核成功 2-审核失败 3-认证撤销")
@@ -63,6 +62,7 @@ public class DriverAuthMaterial implements Serializable {
 
     @Schema(name = "idcardExpire", description = "身份证过期时间")
     @TableField("idcard_expire")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date idcardExpire;
 
     @Schema(name = "idcardFront", description = "身份证正面")
@@ -83,10 +83,12 @@ public class DriverAuthMaterial implements Serializable {
 
     @Schema(name = "drcardExpire", description = "驾驶证过期")
     @TableField("drcard_expire")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date drcardExpire;
 
     @Schema(name = "drcardIssueDate", description = "驾驶证领取日期")
     @TableField("drcard_issue_date")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date drcardIssueDate;
 
     @Schema(name = "drcardFront", description = "驾驶证正面")
@@ -103,10 +105,12 @@ public class DriverAuthMaterial implements Serializable {
 
     @Schema(name = "createTime", description = "创建时间")
     @TableField("create_time")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date createTime;
 
     @Schema(name = "updateTime", description = "修改时间")
     @TableField("update_time")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date updateTime;
 
     @Schema(name = "deleted", description = "逻辑删除")
@@ -121,6 +125,7 @@ public class DriverAuthMaterial implements Serializable {
 
     @Schema(name = "auditTime", description = "审核时间")
     @TableField("audit_time")
+    @JsonFormat(pattern = "YYYY-MM-dd", timezone = "GTM+8")
     private Date auditTime;
 
     @Schema(name = "auditUserId", description = "审核人")
@@ -154,5 +159,13 @@ public class DriverAuthMaterial implements Serializable {
     @Schema(name = "driverId", description = "司机ID")
     @TableField("driver_id")
     private Long driverId;
+
+    /**
+     * 获取司机驾龄
+     * @return
+     */
+    public Long getYear() { // 前端胡须表达式的row.year可以自动调此方法
+        return DateUtil.betweenYear(this.drcardIssueDate, new Date(), false);
+    }
 
 }

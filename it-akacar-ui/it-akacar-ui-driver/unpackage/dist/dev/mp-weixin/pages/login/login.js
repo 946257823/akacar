@@ -158,7 +158,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {
+/* WEBPACK VAR INJECTION */(function(wx, uni) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -183,9 +183,55 @@ exports.default = void 0;
 //
 var _default = {
   data: function data() {
-    return {};
+    return {
+      driver_login_type: 1
+    };
   },
   methods: {
+    // 微信登录
+    wxLogin: function wxLogin() {
+      var _this = this;
+      wx.login({
+        success: function success(res) {
+          if (res.code) {
+            _this.post("/uaa/app/login/wxLogin/" + res.code + "/" + _this.driver_login_type, function (resp) {
+              if (resp.success) {
+                uni.showToast({
+                  icon: "success",
+                  title: "登录成功!",
+                  duration: 2000
+                });
+                var _resp$data = resp.data,
+                  tokenName = _resp$data.tokenName,
+                  tokenValue = _resp$data.tokenValue,
+                  permission = _resp$data.permission,
+                  loginfo = _resp$data.loginfo;
+                // 保存Token到LocalStorage
+                uni.setStorageSync("tokenName", tokenName);
+                uni.setStorageSync("tokenValue", tokenValue);
+                // 保存权限信息到LocalStorage
+                uni.setStorageSync("permission", permission);
+                // 保存用户信息到LocalStorage
+                uni.setStorageSync("loginfo", loginfo);
+                // 设置一个2000毫秒后执行的定时器
+                setTimeout(function () {
+                  uni.switchTab({
+                    url: "/pages/workbench/workbench"
+                  });
+                }, 2000);
+              } else {
+                uni.showToast({
+                  icon: "error",
+                  title: resp.message
+                });
+              }
+            });
+          } else {
+            console.log('登录失败！' + res.errMsg);
+          }
+        }
+      });
+    },
     toRegisterPage: function toRegisterPage() {
       uni.navigateTo({
         url: '/pages/register/register'
@@ -195,7 +241,7 @@ var _default = {
   onLoad: function onLoad() {}
 };
 exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
 
 /***/ }),
 

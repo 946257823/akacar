@@ -152,7 +152,7 @@ export default {
 		wxRegister() {
 			const _this = this;
 			wx.login({
-				success(res) {
+				success(res) {  
 					if(res.code) {
 						_this.get("/driver/app/driver/register/" + res.code,(resp) => {
 							if(resp.success) {

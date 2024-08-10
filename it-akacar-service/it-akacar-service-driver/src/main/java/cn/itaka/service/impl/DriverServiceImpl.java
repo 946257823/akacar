@@ -1,5 +1,7 @@
 package cn.itaka.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -8,29 +10,31 @@ import cn.itaka.constants.Constants;
 import cn.itaka.constants.GlobalExceptionCode;
 import cn.itaka.exception.GlobalException;
 import cn.itaka.feign.AppLoginFeignClient;
+import cn.itaka.mapper.DriverAuthMaterialMapper;
 import cn.itaka.mapper.DriverMapper;
-import cn.itaka.pojo.domain.Driver;
-import cn.itaka.pojo.domain.DriverSetting;
-import cn.itaka.pojo.domain.DriverSummary;
-import cn.itaka.pojo.domain.DriverWallet;
+import cn.itaka.pojo.domain.*;
+import cn.itaka.pojo.dto.DriverDaySummaryDto;
+import cn.itaka.pojo.dto.DriverLocationToGeoDto;
 import cn.itaka.pojo.param.RegisterSaveLoginParam;
-import cn.itaka.service.IDriverService;
-import cn.itaka.service.IDriverSettingService;
-import cn.itaka.service.IDriverSummaryService;
-import cn.itaka.service.IDriverWalletService;
+import cn.itaka.service.*;
 import cn.itaka.template.AppWechatTemplate;
 import cn.itaka.utils.AssertUtil;
+import cn.itaka.utils.BitStatesUtil;
 import cn.itaka.utils.NameUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Point;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -59,6 +63,12 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
 
     @Autowired
     private AppLoginFeignClient appLoginFeignClient;
+
+    @Autowired
+    private DriverAuthMaterialMapper driverAuthMaterialMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      *
      * @param openIdCode
@@ -90,14 +100,86 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
         initDriverAssociation(id);
 
         // 保存login
-        saveLogin(openId,phone);
+        saveLogin(id,openId,phone);
 
     }
+/**
+ *查询司机实名认证信息
+ */
+    @Override
+   public DriverAuthMaterial getRealAuthInfo() {
+       DriverAuthMaterial driverAuthMaterial = driverAuthMaterialMapper.selectOne(new LambdaQueryWrapper<DriverAuthMaterial>()
+               .eq(DriverAuthMaterial::getDriverId, StpUtil.getLoginIdAsLong())
+               .orderByDesc(DriverAuthMaterial::getCreateTime)
+               .last("limit 1"));
+       return driverAuthMaterial;
+   }
+
+    @Override
+    public DriverDaySummaryDto getDaySummary() {
+        DriverSummary driverSummary = iDriverSummaryService.getById(StpUtil.getLoginIdAsLong());
+        AssertUtil.isNotNull(driverSummary,GlobalExceptionCode.SERVICE_ERROR);
+        return BeanUtil.copyProperties(driverSummary,DriverDaySummaryDto.class);
+    }
+
+    /**
+     * 司机上线
+     */
+    @Override
+    public void online() {
+        // 1.业务校验 1.查询司机的配置，判断是否存在
+        long loginId = StpUtil.getLoginIdAsLong();
+        DriverSetting driverSetting = iDriverSettingService.getById(loginId);
+        AssertUtil.isNotNull(driverSetting,GlobalExceptionCode.SERVICE_ERROR);
+        // 业务实现 1.把司机配置信息存储到Redis中
+        String key = String.format(Constants.Redis.DRIVER_ONLINE_KEY, loginId);
+        // @TODO:上线之前把过期时间改为30分钟
+        redisTemplate.opsForValue().set(key,driverSetting,10, TimeUnit.HOURS);
+
+    }
+    /**
+     * 司机下线
+     */
+    @Override
+    public void offline() {
+        // 1.删除司机的redis配置
+        long loginId = StpUtil.getLoginIdAsLong();
+        String key = String.format(Constants.Redis.DRIVER_ONLINE_KEY, loginId);
+        redisTemplate.delete(key);
+        // 2.删除司机的GEO位置信息
+        redisTemplate.opsForGeo().remove(Constants.Redis.DRIVER_LOCATION_KEY,loginId);
+    }
+
+
+
+    @Override
+    public void changeLocationToGeo(DriverLocationToGeoDto driverLocationToGeoDto) {
+        // 1.参数校验JSR303
+        // 2.业务校验-司机的配置在redis中是否存在，如果不存在则不缓存
+        String loginId = StpUtil.getLoginIdAsString(); // redis的key必须位string！
+        String key = String.format(Constants.Redis.DRIVER_ONLINE_KEY, loginId);
+        Object driverSetting = redisTemplate.opsForValue().get(key);
+        if (ObjectUtil.isNull(driverSetting)) {
+            return;
+        }
+        // 3.业务实现 缓存司机的位置到Geo
+        redisTemplate.opsForGeo().add(
+                Constants.Redis.DRIVER_LOCATION_KEY,
+                new Point(driverLocationToGeoDto.getLongitude(), driverLocationToGeoDto.getLatitude())
+                , StpUtil.getLoginIdAsString());
+    }
+
+    /**
+     * 司机实名认证
+     * @param driver
+     */
+
+
 
     /**
      * 保存login
      */
-    private void saveLogin(String openId, String phone) {
+    private void saveLogin(Long id, String openId, String phone) {
         // 3.3 调用feign接口保存Login
         RegisterSaveLoginParam registerSaveLoginParam = new RegisterSaveLoginParam();
         registerSaveLoginParam.setUsername(phone);
@@ -107,10 +189,11 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
         registerSaveLoginParam.setAvatar("");
         registerSaveLoginParam.setAdmin(false);
         String name = NameUtil.getName();
-        registerSaveLoginParam.setNick_name(name);
-        registerSaveLoginParam.setOpen_id(openId);
+        registerSaveLoginParam.setNickName(name);
+        registerSaveLoginParam.setOpenId(openId);
         registerSaveLoginParam.setName(name);
         registerSaveLoginParam.setPhone(phone);
+        registerSaveLoginParam.setId(id);
 
         appLoginFeignClient.save(registerSaveLoginParam);
     }
@@ -239,8 +322,7 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper, Driver> impleme
         driver.setDeleted(false);
         driver.setVersion(0);
         driver.setOpenId(openId);
-        // @todo 明天写
-        // driver.setBitState(0L);
+        driver.setBitState(BitStatesUtil.OP_PHONE);
         super.save(driver);
     }
 }

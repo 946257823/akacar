@@ -16,7 +16,6 @@ public class WechatAutoConfiguration {
     @ConditionalOnMissingBean(
             name = {"wechatTemplate"} // bean里面没有才会创建，避免重复创建
     )
-
     public AppWechatTemplate wechatTemplate(AppSettingProperties appSettingProperties) {
         AppWechatTemplate appWechatTemplate = new AppWechatTemplate(appSettingProperties);
         return appWechatTemplate;

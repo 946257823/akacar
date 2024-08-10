@@ -134,7 +134,7 @@ app.config.globalProperties.request = function(url, method, data, fun) {
 app.config.globalProperties.isAuth = function(permission) {
 	console.log("权限校验：",permission);
 	//判断是否是管理员
-	let login = localStorage.getItem("login");
+	let login = localStorage.getItem("loginInfo");
 	login = JSON.parse(login);
 	if(login.admin)return true;
 

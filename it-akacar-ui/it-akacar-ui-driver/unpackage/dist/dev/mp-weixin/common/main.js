@@ -78,12 +78,17 @@ var baseUrl = "http://127.0.0.1:10010/akacar";
 function sendRequest(url, method, sendData, callBack) {
   //uni.showLoading({ title: "请求中..." })
 
+  var tokenName = uni.getStorageSync("tokenName");
+  var tokenValue = uni.getStorageSync("tokenValue");
+  var header = {};
+  if (tokenName && tokenValue) {
+    header[tokenName] = tokenValue;
+  }
   uni.request({
     "url": baseUrl + url,
     "method": method,
-    "header": {
-      satoken: uni.getStorageSync("tokenValue")
-    },
+    "header": header,
+    // 在前面定义好header，后端传过来的tokenName是啥就是啥
     "data": sendData,
     success: function success(resp) {
       if (resp.statusCode == 401) {
@@ -435,111 +440,9 @@ __webpack_require__.r(__webpack_exports__);
   !*** ./node_modules/babel-loader/lib!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader??ref--13-1!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/script.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib??vue-loader-options!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/style.js!F:/code/it-akacar/it-akacar-ui/it-akacar-ui-driver/App.vue?vue&type=script&lang=js& ***!
   \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(wx, uni) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _default = {
-  data: function data() {
-    return {};
-  },
-  onLaunch: function onLaunch() {
-    var _this = this;
-
-    //初始化工作状态
-    _this.initWorkStatus();
-    //保持屏幕亮着11
-    wx.setKeepScreenOn({
-      keepScreenOn: true
-    });
-    //实时监听时机位置
-    uni.startLocationUpdate({
-      success: function success(res) {},
-      fail: function fail(error) {}
-    });
-
-    //监听时机坐标改变
-    uni.onLocationChange(function (res) {
-      //缓存司机定位，用作接单
-      _this.cacheLoacationForOrder(res);
-      //缓存司机定位，用作司乘同显
-      _this.cacheLoacationForMove(res);
-
-      //把坐标实时传递到其他页面
-      //const location = {latitude:30.5785234,longitude:104.0701595};
-      var location = {
-        latitude: res.latitude,
-        longitude: res.longitude
-      };
-      uni.$emit("locationChange", location);
-      uni.setStorageSync("location", location);
-    });
-  },
-  methods: {
-    //接乘客，以及开始代驾，缓存位置用作司乘同显
-    cacheLoacationForMove: function cacheLoacationForMove(res) {
-      //缓存定位，参数对象
-      var _this = this;
-      var orderNo = uni.getStorageSync("orderNo");
-      var param = {
-        latitude: res.latitude,
-        longitude: res.longitude,
-        orderNo: orderNo,
-        status: 0 //状态区分是：接客户，还是开始代驾，这2中情况下都要缓存
-      };
-
-      if (uni.getStorageSync("workStatus") == '接客户') {
-        //去接乘客，
-        param.status = _this.orderStatus.STATUS_DRIVER_ARRIVE;
-      } else if (uni.getStorageSync("workStatus") == '开始代驾') {
-        param.status = _this.orderStatus.STATUS_DRIVER_STARTING;
-      } else {
-        return;
-      }
-      _this.post(_this.url.baseUrl + "/driver/driver/cache/location/point", param, function (resp) {});
-    },
-    //开始接单：缓存位置用作司机匹配订单
-    cacheLoacationForOrder: function cacheLoacationForOrder(res) {
-      var _this = this;
-      if (uni.getStorageSync("workStatus") != '开始接单') {
-        return;
-      }
-      //只在10s内才缓存，为了减少缓存频率
-      //if(new Date().getSeconds() > 10 ){return;}
-
-      var setting = uni.getStorageSync("driverSetting");
-
-      //缓存定位，参数对象
-      var param = {
-        latitude: res.latitude,
-        longitude: res.longitude,
-        //接单条件：方圆n公里
-        rangeDistance: setting.rangeDistance,
-        //接单条件：订单距离
-        orderDistance: setting.orderDistance
-      };
-      _this.post(_this.url.baseUrl + "/driver/driver/cache/location/geo", param, function (resp) {});
-    },
-    //初始化司机的工作状态：默认是停止接单
-    initWorkStatus: function initWorkStatus() {
-      var _this = this;
-      var workStatus = uni.getStorageSync("workStatus");
-      if (!workStatus || workStatus == '') {
-        console.log("司机状态设置为 : 停止接单");
-        uni.setStorageSync("workStatus", "停止接单");
-      }
-    }
-  },
-  onShow: function onShow() {},
-  onHide: function onHide() {}
-};
-exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+throw new Error("Module build failed (from ./node_modules/@dcloudio/webpack-uni-mp-loader/lib/script.js):\nSyntaxError: Unexpected reserved word 'let'. (20:2)\n    at instantiate (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:67:32)\n    at constructor (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:364:12)\n    at TypeScriptParserMixin.raise (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:3365:19)\n    at TypeScriptParserMixin.checkReservedWord (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12464:12)\n    at TypeScriptParserMixin.checkReservedWord (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9096:13)\n    at TypeScriptParserMixin.parseObjectProperty (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12131:12)\n    at TypeScriptParserMixin.parseObjPropValue (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12154:100)\n    at TypeScriptParserMixin.parseObjPropValue (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9482:18)\n    at TypeScriptParserMixin.parsePropertyDefinition (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12083:17)\n    at TypeScriptParserMixin.parseObjectLike (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11993:21)\n    at TypeScriptParserMixin.parseExprAtom (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11464:23)\n    at TypeScriptParserMixin.parseExprSubscripts (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11171:23)\n    at TypeScriptParserMixin.parseUpdate (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11153:21)\n    at TypeScriptParserMixin.parseMaybeUnary (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11127:23)\n    at TypeScriptParserMixin.parseMaybeUnary (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9590:20)\n    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10956:61)\n    at TypeScriptParserMixin.parseExprOps (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10962:23)\n    at TypeScriptParserMixin.parseMaybeConditional (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10937:23)\n    at TypeScriptParserMixin.parseMaybeAssign (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10895:21)\n    at TypeScriptParserMixin.parseMaybeAssign (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9529:20)\n    at F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10863:39\n    at TypeScriptParserMixin.allowInAnd (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12640:12)\n    at TypeScriptParserMixin.parseMaybeAssignAllowIn (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10863:17)\n    at TypeScriptParserMixin.parseObjectProperty (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12127:83)\n    at TypeScriptParserMixin.parseObjPropValue (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12154:100)\n    at TypeScriptParserMixin.parseObjPropValue (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9482:18)\n    at TypeScriptParserMixin.parsePropertyDefinition (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12083:17)\n    at TypeScriptParserMixin.parseObjectLike (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11993:21)\n    at TypeScriptParserMixin.parseExprAtom (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11464:23)\n    at TypeScriptParserMixin.parseExprSubscripts (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11171:23)\n    at TypeScriptParserMixin.parseUpdate (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11153:21)\n    at TypeScriptParserMixin.parseMaybeUnary (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:11127:23)\n    at TypeScriptParserMixin.parseMaybeUnary (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9590:20)\n    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10956:61)\n    at TypeScriptParserMixin.parseExprOps (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10962:23)\n    at TypeScriptParserMixin.parseMaybeConditional (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10937:23)\n    at TypeScriptParserMixin.parseMaybeAssign (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10895:21)\n    at TypeScriptParserMixin.parseMaybeAssign (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9529:20)\n    at F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10863:39\n    at TypeScriptParserMixin.allowInAnd (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12635:16)\n    at TypeScriptParserMixin.parseMaybeAssignAllowIn (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:10863:17)\n    at TypeScriptParserMixin.parseExportDefaultExpression (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:14235:22)\n    at TypeScriptParserMixin.parseExportDefaultExpression (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9182:18)\n    at TypeScriptParserMixin.parseExport (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:14139:25)\n    at TypeScriptParserMixin.parseExport (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9164:20)\n    at TypeScriptParserMixin.parseStatementContent (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:13073:27)\n    at TypeScriptParserMixin.parseStatementContent (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:9223:18)\n    at TypeScriptParserMixin.parseStatementLike (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12952:17)\n    at TypeScriptParserMixin.parseModuleItem (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:12933:17)\n    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\\software\\HBuilderX\\plugins\\uniapp-cli\\node_modules\\@babel\\parser\\lib\\index.js:13558:36)");
 
 /***/ }),
 

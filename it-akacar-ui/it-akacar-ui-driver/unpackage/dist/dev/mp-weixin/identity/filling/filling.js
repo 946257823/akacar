@@ -178,10 +178,14 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ 11));
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 //
 //
 //
@@ -309,18 +313,19 @@ var dayjs = __webpack_require__(/*! dayjs */ 94);
 var _default = {
   data: function data() {
     return {
+      realAuthTitle: "准确填写个人信息，可享受每份代驾订单人身意外险准确填写个人信息，可享受每份代驾订单人身意外险",
       realAuthStatus: null,
       mode: 'fill',
       style: {
         color: '#FF9900'
       },
       //证件背景：用作小程序预览
-      cardBackground: ['../static/filling/credentials-bg.jpg', '../static/filling/credentials-bg.jpg', '../static/filling/credentials-bg.jpg', '../static/filling/credentials-bg.jpg', '../static/filling/credentials-bg.jpg', '../static/filling/credentials-bg.jpg'],
+      cardBackground: [],
       idcard: {
         //身份证ID
         idNumber: '',
         name: '',
-        sex: '',
+        gender: '',
         idcardAddress: '',
         //地址
         shortAddress: '',
@@ -329,11 +334,11 @@ var _default = {
         //过期时间
         idcardExpire: '',
         //身份证正面:云地址
-        idcardFront: '',
+        idcardFront: '../static/filling/credentials-bg.jpg',
         //身份证背面:云地址
-        idcardBack: '',
+        idcardBack: '../static/filling/credentials-bg.jpg',
         //手持身份证:云地址
-        idcardHolding: ''
+        idcardHolding: '../static/filling/credentials-bg.jpg'
       },
       //联系人
       contact: {
@@ -361,11 +366,11 @@ var _default = {
         //驾驶证过期时间
         drcardExpire: '',
         //驾驶证正面:云地址
-        drcardFront: '',
+        drcardFront: '../static/filling/credentials-bg.jpg',
         //驾驶证背面:云地址
-        drcardBack: '',
+        drcardBack: '../static/filling/credentials-bg.jpg',
         //手持驾驶证:云地址
-        drcardHolding: ''
+        drcardHolding: '../static/filling/credentials-bg.jpg'
       },
       //记录所有云文件地址，用作删除
       allCosImg: [],
@@ -378,6 +383,30 @@ var _default = {
     //提交认证材料
     save: function save() {
       var _this = this;
+
+      // 通过解构表达式把这三个对象的数据拿出来装成一个对象
+      var param = _objectSpread(_objectSpread(_objectSpread({}, _this.idcard), _this.drcard), _this.contact);
+      _this.post("/driver/app/driver/saveRealAuth", param, function (res) {
+        var success = res.success,
+          message = res.message;
+        if (success) {
+          uni.showToast({
+            icon: "success",
+            title: "实名信息提交成功，请等待审核",
+            duration: 2000
+          });
+          setTimeout(function () {
+            uni.redirectTo({
+              url: "/pages/workbench/workbench"
+            });
+          }, 2000);
+        } else {
+          uni.showToast({
+            icon: "error",
+            title: "提交失败，请联系管理员"
+          });
+        }
+      });
     },
     //输入联系人信息
     enterContent: function enterContent(title, field) {
@@ -401,38 +430,142 @@ var _default = {
     //拍照页面图片回传
     uploadPhoto: function uploadPhoto(type, photoPath) {
       var _this = this;
+      _this.uploadFile(photoPath, function (res) {
+        var message = res.message,
+          success = res.success,
+          data = res.data;
+        if (!success) {
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+          return;
+        }
+        // 传照片到云服务器
+        if ("idcardHolding" == type) {
+          _this.idcard.idcardHolding = data;
+        } else if ("drcardHolding" == type) {
+          _this.drcard.drcardHolding = data;
+        }
+      });
     },
     //驾驶证正面
     scanDrcardFront: function scanDrcardFront(res) {
       var _this = this;
       var result = res.detail;
+      var imagePath = _this.uploadFile(result.image_path);
+      _this.uploadFile(result.image_path, function (res) {
+        var message = res.message,
+          success = res.success,
+          data = res.data;
+        console.log(data);
+        if (!success) {
+          console.log("失败");
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+          return;
+        }
+        _this.drcard.drcardFront = data;
+      });
+      _this.drcard.drcardExpire = result.valid_to.text;
+      _this.drcard.carClass = result.car_class.text;
+      _this.drcard.drcardIssueDate = result.issue_date.text;
+    },
+    // //驾驶证副页
+    scanDrcardBack: function scanDrcardBack(res) {
+      var _this = this;
+      var result = res.detail;
+      _this.uploadFile(result.image_path, function (res) {
+        var message = res.message,
+          success = res.success,
+          data = res.data;
+        if (!success) {
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+          return;
+        }
+        _this.drcard.idcardBack = data;
+      });
     },
     //身份证背面识别
     scanIdcardBack: function scanIdcardBack(res) {
       var _this = this;
       var result = res.detail;
+      consol.log(result);
+      _this.uploadFile(result.image_path, function (res) {
+        var message = res.message,
+          success = res.success,
+          data = res.data;
+        if (!success) {
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+          return;
+        }
+        _this.idcard.idcardBack = data;
+      });
+      var validDateArr = result.valid_date.text.split("-");
+      var validDate = dayjs(validDateArr[1]).format("YYYY-MM-DD");
+      _this.idcard.idcardExpire = validDate;
     },
-    //身份证识别回调
+    //身份证正面识别回调
     scanIdcardFront: function scanIdcardFront(res) {
       var _this = this;
       var result = res.detail;
+      _this.uploadFile(result.image_path, function (res) {
+        var message = res.message,
+          success = res.success,
+          data = res.data;
+        if (!success) {
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+          return;
+        }
+        _this.idcard.idcardFront = data;
+      });
+      _this.idcard.idNumber = result.id.text;
+      _this.idcard.name = result.name.text;
+      _this.idcard.gender = result.gender.text;
+      _this.idcard.idcardAddress = result.address.text;
+      _this.idcard.birthday = result.birth.text;
     },
     //文件上传
-    uploadFile: function uploadFile(imagePath, num, callback) {
+    uploadFile: function uploadFile(imagePath, callBack) {
       var _this = this;
+      _this.upload("/common/cos/uploadFile/akacar", imagePath, {}, callBack);
     },
     //加载司机的实名信息
     loadDriverAuthMaterial: function loadDriverAuthMaterial() {
       var _this = this;
+      var realAuthSuccess = uni.getStorageSync("realAuthSuccess");
+      if (realAuthSuccess != null && realAuthSuccess != {}) {
+        Object.assign(_this.idcard, realAuthSuccess);
+        Object.assign(_this.drcard, realAuthSuccess);
+        Object.assign(_this.contact, realAuthSuccess);
+        if (realAuthSuccess.realAuthStatus == 0) {
+          _this.realAuthTitle = "审核中";
+        } else if (realAuthSuccess.realAuthStatus == 2) {
+          _this.realAuthTitle = "审核失败,原因：" + realAuthSuccess.auditRemark;
+        } else if (realAuthSuccess.realAuthStatus == 3) {
+          _this.realAuthTitle = "审核撤销";
+        }
+      }
+    },
+    //获取上个页面传入的参数
+    onLoad: function onLoad(options) {
+      console.log(options.driverId);
+    },
+    onShow: function onShow() {
+      var _this = this;
+      _this.loadDriverAuthMaterial();
     }
-  },
-  //获取上个页面传入的参数
-  onLoad: function onLoad(options) {
-    console.log(options.driverId);
-  },
-  onShow: function onShow() {
-    var _this = this;
-    _this.loadDriverAuthMaterial();
   }
 };
 exports.default = _default;

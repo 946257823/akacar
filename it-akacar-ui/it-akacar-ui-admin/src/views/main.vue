@@ -384,7 +384,7 @@ export default {
 	},
 	mounted: function() {
 		let that = this;
-    let login = JSON.parse(localStorage.getItem("login"));
+    let login = JSON.parse(localStorage.getItem("loginInfo"));
     that.name = login.username;
     that.photo = login.avatar;
 

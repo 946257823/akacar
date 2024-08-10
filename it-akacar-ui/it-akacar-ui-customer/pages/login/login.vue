@@ -5,7 +5,7 @@
 		<view class="desc">
 			<text class="name">有我在您可放心畅饮</text>
 		</view>
-		<button class="btn" @tap="subscribeMessage()">乘客登陆</button>
+		<button class="btn" @tap="wxLogin()">乘客登陆</button>
 		<view class="register-container">
 			没有账号?
 			<text class="link" @tap="toRegisterPage()">立即注册</text>
@@ -19,10 +19,52 @@
 export default {
 	data() {
 		return {
-			code: null
+			customer_login_type: 2
 		};
 	},
 	methods: {
+		// 微信登录
+		wxLogin() {
+			const _this = this;
+			wx.login({
+				success(res) {
+					if(res.code) {
+						_this.post("/uaa/app/login/wxLogin/" + res.code + "/" + _this.customer_login_type,(resp) => {
+							if(resp.success) {
+								uni.showToast({
+									icon:"success",
+									title:"登录成功!",
+									duration:2000
+								})
+								let {tokenName, tokenValue, permission, loginfo} = resp.data;
+								// 保存Token到LocalStorage
+								uni.setStorageSync("tokenName",tokenName);
+								
+								uni.setStorageSync("tokenValue",tokenValue);
+								// 保存权限信息到LocalStorage
+									uni.setStorageSync("permission",permission);
+								// 保存用户信息到LocalStorage
+								uni.setStorageSync("loginfo",loginfo);
+								// 设置一个2000毫秒后执行的定时器
+								setTimeout(function() {
+								    uni.switchTab({
+								    	url:"/pages/workbench/workbench"
+								    })
+								}, 2000);
+							}else {
+								uni.showToast({
+									icon:"error",
+									title:resp.message,
+								})
+							}
+						})
+					}else {
+						console.log('登录失败！' + res.errMsg)
+					}
+				}
+			})
+		},
+		
 		toRegisterPage() {
 			uni.navigateTo({
 				url:'/pages/register/register'

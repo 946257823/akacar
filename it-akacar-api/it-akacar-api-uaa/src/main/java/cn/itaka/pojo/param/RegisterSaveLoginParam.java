@@ -15,8 +15,9 @@ public class RegisterSaveLoginParam {
     private Boolean enabled;
     private String avatar;
     private Boolean admin;
-    private String nick_name;
-    private String open_id;
+    private String nickName;
+    private String openId;
     private String name;
     private String phone;
+    private Long id;
 }

@@ -33,7 +33,6 @@ public class AppWechatTemplate {
             throw new RuntimeException("获取access_token失败");
         }
         return accessToken;
-
     }
 
     /**

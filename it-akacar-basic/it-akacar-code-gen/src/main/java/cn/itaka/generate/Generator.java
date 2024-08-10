@@ -70,10 +70,12 @@ public class Generator {
 
         // 中间表 & undo_log不要生成
         strategy.setInclude(new String[]{
-                "t_login",
-                "t_menu",
-                "t_permission",
-                "t_role"
+                "t_charge_rule_return",
+                "t_charge_rule_reward",
+                "t_charge_rule_start",
+                "t_charge_rule_wait",
+                "t_profitsharing_rule_base",
+                "t_profitsharing_rule_other_fee"
         }); // 需要生成的表
 
         //使用lombok

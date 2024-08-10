@@ -52,9 +52,9 @@ export default {
 		},
 		//确认上传
 		uploadBtn(){
-			//获取到所有页面
+			//获取到所有页面,拿当前已经渲染出来的页面信息
 			let pages = getCurrentPages();
-			//上一个页面
+			//上一个页面，固定写法
 			let prevPage = pages[pages.length - 2];
 			//调用上一页的 uploadPhoto 方法
 			prevPage.$vm.uploadPhoto(this.type,this.photoPath);

@@ -352,20 +352,145 @@ export default {
 	},
 		
 	methods: {
+		// 语音播报
+		playVoice(src) {
+			const innerAudioContext = uni.createInnerAudioContext();
+			innerAudioContext.autoplay = true;
+			innerAudioContext.src = src;
+			innerAudioContext.play();
+		} ,
 		
 	
-	},
-	onLoad: function() {
-		//加载进行中的订单
-		let _this = this;
-	
+		// 开始接单
+		startWorkHandle() {
+			const _this = this;
+			_this.post("/driver/app/driver/online" , (res) => {
+				let {succes, message} = res;
+				if(!success) {
+					uni.showToast({
+						icon:"error",
+						title:"上线失败"
+					})
+				}
+			})
+			uni.setStorageSync("workStatus", _this.Consts.WORK_STATUS.START_ACCPET_ORDER);
+			_this.workStatus._this.Consts.WORK_STATUS.START_ACCPET_ORDER;
+			_this.playVoice("/static/voice/voice_1.mp3")
+		},
 		
-	},
-	onShow: function() {
-		let _this = this;
-	
-	},
-	onHide: function() {
+		// 停止接单
+		stopWorkHandle() {
+			const _this = this;
+			_this.post("/driver/app/driver/offline" , (res) => {
+				let {succes, message} = res;
+				if(!success) {
+					uni.showToast({
+						icon:"error",
+						title:"下线失败"
+					})
+				}
+			})
+			uni.setStorageSync("workStatus", _this.Consts.WORK_STATUS.STOP_ACCPET_ORDER);
+			_this.workStatus._this.Consts.WORK_STATUS.STOP_ACCPET_ORDER;
+			_this.playVoice("/static/voice/voice_2.mp3")
+		},
+		
+		
+		// 回到当前位置
+		returnLocationHandle() {
+			const _this = this;
+			_this._mapContext.moveToLocaltion();
+		},
+		
+
+		//初始化窗口样式
+		initStyle(){
+			let _this = this;
+			//处理窗口样式
+			let windowHeight = uni.getSystemInfoSync().windowHeight;
+			_this.windowHeight = windowHeight-200;
+			_this.contentStyle = `height:${_this.windowHeight}px;`;
+		},
+		
+		
+		toRealAuth() {
+			uni.navigateTo({
+				 //跳转实名页面，把司机ID传递过去
+				url:"/identity/filling/filling"
+			})
+		},
+		
+		getDriverRealAuthInfo() {
+			const _this = this;
+			_this.get("/driver/app/driver/realAuthInfo", (res) => {
+				let {success, message, data} = res;
+			
+				if(success) {
+					if(data != null && data.realAuthStatus == 1) {
+						_this.realAuthSuccess = true;
+					}else {
+						uni.setStorageSync("realAuthSuccess", data);
+						_this.realAuthSuccess = false;
+					}
+				}else {
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+				}
+			})
+		},
+		
+		getDriverDaySummery() {
+			const _this = this;
+			_this.get("/driver/app/driver/daySummary", (res) => {
+				let {success, message, data} = res;
+				if(success) {
+					_this.summary = data
+				}else {
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+				}
+			})
+		},
+		
+		// 初始化地图
+		initMap() {
+			const _this = this;
+			// 1.创建map对象
+			this._mapContext = uni.createMapContext("Map", this)
+			// 2.设置初始经纬度
+			uni.getLocation({
+				type: 'wgs84',
+				success: function (res) {
+					console.log('当前位置的经度：' + res.longitude);
+					console.log('当前位置的纬度：' + res.latitude);
+					_this.location.longitude = res.longitude;
+					_this.location.latitude = res.latitude;
+				},
+			})
+		},
+		
+		onLoad: function() {
+			//加载进行中的订单
+			let _this = this;
+			_this.initStyle();
+			
+		},
+		onShow: function() {
+			// 查询
+			let _this = this;
+			_this.getDriverRealAuthInfo();
+			
+			_this.getDriverDaySummery();
+			
+			_this.initMap();
+		},
+		onHide: function() {
+			
+		}
 	}
 };
 </script>

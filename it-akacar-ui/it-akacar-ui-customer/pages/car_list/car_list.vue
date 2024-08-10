@@ -39,18 +39,22 @@ export default {
 				url:"../add_car/add_car"
 			})
 		},
-		loadCarList(){
+		
+		loadCarList() {
 			let _this = this;
-			_this.get("/customer/app/customer/car/list/current",(res)=>{
-				let {success,message,data} = res.data;
-				if(success){
-					_this.list = data;
-				}else{
-					uni.showToast({icon:'error',title:message });
+			_this.get("/customer/app/customer/car/list", (res) => {
+				let {success, message, data} = res;
+				if(success) {
+					_this = list data;
+				}else {
+					uni.showToast({
+						icon:'error',
+						title:message
+					});
 				}
-				
-			});
+			})
 		}
+		
     },
 	//每次展示页面就会调用
 	onShow() {

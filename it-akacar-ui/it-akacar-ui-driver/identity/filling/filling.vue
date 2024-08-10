@@ -2,13 +2,13 @@
 	<view class="page">
 		<view class="notice">
 			<u-icon name="info-circle-fill" color="#AC9146" size="30" top="3" />
-			<text>准确填写个人信息，可享受每份代驾订单人身意外险</text>
+			<text>{{realAuthTitle}}</text>
 		</view>
 		<view class="credentials-container">
 			<view class="credentials">
-				<image :src="cardBackground[0]" class="bg"></image>
+				<image :src="idcard.idcardFront" class="bg"></image>
 				<view class="cover">
-					<image src="../static/filling/card.png" mode="widthFix" class="card"></image>
+					<image src="../static/filling/credentials-bg.jpg" mode="widthFix" class="card"></image>
 					<text class="desc">身份证正面</text>
 					<ocr-navigator @onSuccess="scanIdcardFront" certificateType="idCard" :opposite="false">
 						<button class="camera"></button>
@@ -16,9 +16,9 @@
 				</view>
 			</view>
 			<view class="credentials">
-				<image :src="cardBackground[1]" class="bg"></image>
+				<image :src="idcard.idcardBack" class="bg"></image>
 				<view class="cover">
-					<image src="../static/filling/card.png" mode="widthFix" class="card"></image>
+					<image src="../static/filling/credentials-bg.jpg" mode="widthFix" class="card"></image>
 					<text class="desc">身份证背面</text>
 					<ocr-navigator @onSuccess="scanIdcardBack" certificateType="idCard" :opposite="true">
 						<button class="camera"></button>
@@ -26,17 +26,17 @@
 				</view>
 			</view>
 			<view class="credentials">
-				<image :src="cardBackground[2]" class="bg"></image>
+				<image :src="idcard.idcardHolding" class="bg"></image>
 				<view class="cover">
-					<image src="../static/filling/card.png" mode="widthFix" class="card"></image>
+					<image src="../static/filling/credentials-bg.jpg" mode="widthFix" class="card"></image>
 					<text class="desc">手持身份证</text>
 					<button class="camera" @tap="takePhoto('idcardHolding')"></button>
 				</view>
 			</view>
 			<view class="credentials">
-				<image :src="cardBackground[3]" class="bg"></image>
+				<image :src="drcard.drcardFront" class="bg"></image>
 				<view class="cover">
-					<image src="../static/filling/card.png" mode="widthFix" class="card"></image>
+					<image src="../static/filling/credentials-bg.jpg" mode="widthFix" class="card"></image>
 					<text class="desc">驾驶证正面</text>
 					<ocr-navigator @onSuccess="scanDrcardFront" certificateType="driverslicense">
 						<button class="camera"></button>
@@ -44,20 +44,20 @@
 				</view>
 			</view>
 			<view class="credentials">
-				<image :src="cardBackground[4]" class="bg"></image>
+				<image :src="drcard.drcardBack" class="bg"></image>
 				<view class="cover">
-					<image src="../static/filling/card.png" mode="widthFix" class="card"></image>
+					<image src="../static/filling/credentials-bg.jpg" mode="widthFix" class="card"></image>
 					<text class="desc">驾驶证背面</text>
-					<!-- <ocr-navigator @onSuccess="scanDrcardBack" certificateType="menu">
+					<ocr-navigator @onSuccess="scanDrcardBack" certificateType="driverslicense">
 						<button class="camera"></button>
-					</ocr-navigator> -->
-					<button class="camera" @tap="takePhoto('drcardBack')"></button>
+					</ocr-navigator>
+<!-- 					<button class="camera" @tap="takePhoto('drcardBack')"></button> -->
 				</view>
 			</view>
 			<view class="credentials">
-				<image :src="cardBackground[5]" class="bg"></image>
+				<image :src="drcard.drcardHolding" class="bg"></image>
 				<view class="cover">
-					<image src="../static/filling/card.png" mode="widthFix" class="card"></image>
+					<image src="../static/filling/credentials-bg.jpg" mode="widthFix" class="card"></image>
 					<text class="desc">手持驾驶证</text>
 					<button class="camera" @tap="takePhoto('drcardHolding')"></button>
 				</view>
@@ -68,7 +68,7 @@
 		<view class="list">
 			<u-cell-group border="false">
 				<u-cell-item title="真实姓名" :value="idcard.name" :value-style="style" :arrow="false" />
-				<u-cell-item title="性别" :value="idcard.sex" :value-style="style" :arrow="false" />
+				<u-cell-item title="性别" :value="idcard.gender" :value-style="style" :arrow="false" />
 				<u-cell-item title="生日" :value="idcard.birthday" :value-style="style" :arrow="false" />
 				<u-cell-item title="身份证号" :value="idcard.idNumber" :value-style="style" :arrow="false" />
 				<u-cell-item title="身份证地址" :value="idcard.idcardAddress.substr(0,10)+'...'" :value-style="style"  />
@@ -125,6 +125,7 @@ let dayjs = require('dayjs');
 export default {
 	data() {
 		return {
+			realAuthTitle: "准确填写个人信息，可享受每份代驾订单人身意外险准确填写个人信息，可享受每份代驾订单人身意外险",
 			realAuthStatus:null,
 			mode: 'fill',
 			style: {
@@ -132,18 +133,12 @@ export default {
 			},
 			//证件背景：用作小程序预览
 			cardBackground: [
-				'../static/filling/credentials-bg.jpg',
-				'../static/filling/credentials-bg.jpg',
-				'../static/filling/credentials-bg.jpg',
-				'../static/filling/credentials-bg.jpg',
-				'../static/filling/credentials-bg.jpg',
-				'../static/filling/credentials-bg.jpg'
 			],
 			idcard: {
 				//身份证ID
 				idNumber: '',
 				name: '',
-				sex: '',
+				gender: '',
 				idcardAddress: '',
 				//地址
 				shortAddress: '',
@@ -152,11 +147,11 @@ export default {
 				//过期时间
 				idcardExpire: '',
 				//身份证正面:云地址
-				idcardFront: '',
+				idcardFront: '../static/filling/credentials-bg.jpg',
 				//身份证背面:云地址
-				idcardBack: '',
+				idcardBack: '../static/filling/credentials-bg.jpg',
 				//手持身份证:云地址
-				idcardHolding: ''
+				idcardHolding: '../static/filling/credentials-bg.jpg'
 			},
 			//联系人
 			contact: {
@@ -184,11 +179,11 @@ export default {
 				//驾驶证过期时间
 				drcardExpire: '',
 				//驾驶证正面:云地址
-				drcardFront: '',
+				drcardFront: '../static/filling/credentials-bg.jpg',
 				//驾驶证背面:云地址
-				drcardBack: '',
+				drcardBack: '../static/filling/credentials-bg.jpg',
 				//手持驾驶证:云地址
-				drcardHolding: ''
+				drcardHolding: '../static/filling/credentials-bg.jpg'
 			},
 			//记录所有云文件地址，用作删除
 			allCosImg: [],
@@ -201,6 +196,35 @@ export default {
 		//提交认证材料
 		save(){
 			let _this = this;
+			
+			// 通过解构表达式把这三个对象的数据拿出来装成一个对象
+			let param = {
+				..._this.idcard,
+				..._this.drcard,
+				..._this.contact
+			}
+			_this.post("/driver/app/driver/saveRealAuth", param, (res) => {
+				let {success, message} = res;
+				
+				if(success) {
+					uni.showToast({
+						icon:"success",
+						title:"实名信息提交成功，请等待审核",
+						duration:2000
+					})
+					setTimeout(() => {
+						uni.redirectTo({
+							url:"/pages/workbench/workbench"
+						})
+					},2000)
+				}else {
+					uni.showToast({
+						icon:"error",
+						title:"提交失败，请联系管理员"
+					})
+				}
+			})
+			
 			
 		},
 		//输入联系人信息
@@ -225,40 +249,148 @@ export default {
 		//拍照页面图片回传
 		uploadPhoto(type,photoPath){
 			let _this = this;
+			
+			_this.uploadFile(photoPath, (res) => {
+				let {message, success, data} = res;
+				if(!success) {
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+					return;
+				}
+				// 传照片到云服务器
+				if("idcardHolding" == type) {
+					_this.idcard.idcardHolding = data;
+				}else if ("drcardHolding" == type) {
+					_this.drcard.drcardHolding = data;
+				}
+			});
+			
+			
 		
 		},
 		//驾驶证正面
 		scanDrcardFront(res){
 			let _this = this;
 			let result = res.detail;
+			const imagePath = _this.uploadFile(result.image_path);
+
+			_this.uploadFile(result.image_path, (res) => {
+				
+				let {message, success, data} = res;
+				console.log(data)
+				if(!success) {
+					console.log("失败")
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+					return;
+				}
+				_this.drcard.drcardFront = data;
+			});
+			
+			_this.drcard.drcardExpire = result.valid_to.text;
+			_this.drcard.carClass = result.car_class.text;
+			_this.drcard.drcardIssueDate = result.issue_date.text;
+			
+		},
+		// //驾驶证副页
+		scanDrcardBack(res) {
+			let _this = this;
+			let result = res.detail;
+			_this.uploadFile(result.image_path, (res) => {
+				let {message, success, data} = res;
+				if(!success) {
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+					return;
+				}
+				_this.drcard.idcardBack = data;
+			});
+
 		},
 		//身份证背面识别
 		scanIdcardBack(res){
 			let _this = this;
 			let result = res.detail;
 			
+			consol.log(result);
+			_this.uploadFile(result.image_path, (res) => {
+				let {message, success, data} = res;
+				if(!success) {
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+					return;
+				}
+				_this.idcard.idcardBack = data;
+			});
+			
+			const validDateArr = result.valid_date.text.split("-");
+			const validDate = dayjs(validDateArr[1]).format("YYYY-MM-DD");
+			_this.idcard.idcardExpire = validDate;
 		},
-		//身份证识别回调
+		//身份证正面识别回调
 		scanIdcardFront(res){
 			let _this = this;
 			let result = res.detail;
+			
+			_this.uploadFile(result.image_path, (res) => {
+				let {message, success, data} = res;
+				if(!success) {
+					uni.showToast({
+						icon:"error",
+						title:message
+					})
+					return;
+				}
+				_this.idcard.idcardFront = data;
+			});
+
+			_this.idcard.idNumber = result.id.text;
+			_this.idcard.name = result.name.text;
+			_this.idcard.gender = result.gender.text;
+			_this.idcard.idcardAddress = result.address.text;
+			_this.idcard.birthday = result.birth.text;
+		
 		},
 		//文件上传
-		uploadFile(imagePath,num,callback){
+		uploadFile(imagePath, callBack){
 			let _this = this;
+			_this.upload("/common/cos/uploadFile/akacar", imagePath,{} ,callBack)
 		},
-		//加载司机的实名信息
-		loadDriverAuthMaterial(){
+			//加载司机的实名信息
+		loadDriverAuthMaterial() {
 			let _this = this;
+			const realAuthSuccess = uni.getStorageSync("realAuthSuccess");
+			if(realAuthSuccess != null && realAuthSuccess != {}) {
+				Object.assign(_this.idcard,realAuthSuccess);
+				Object.assign(_this.drcard,realAuthSuccess);
+				Object.assign(_this.contact,realAuthSuccess);
+				
+				if(realAuthSuccess.realAuthStatus == 0) {
+					_this.realAuthTitle = "审核中";
+				}else if(realAuthSuccess.realAuthStatus == 2) {
+					_this.realAuthTitle = "审核失败,原因：" +  realAuthSuccess.auditRemark;
+				}else if(realAuthSuccess.realAuthStatus == 3) {
+					_this.realAuthTitle = "审核撤销";
+				}
+			}
+		},
+	
+		//获取上个页面传入的参数
+		onLoad: function(options) {
+			console.log(options.driverId);
+		},
+		onShow() {
+			let _this = this;
+			_this.loadDriverAuthMaterial();
 		}
-	},
-	//获取上个页面传入的参数
-	onLoad: function(options) {
-		console.log(options.driverId);
-	},
-	onShow() {
-		let _this = this;
-		_this.loadDriverAuthMaterial();
 	}
 };
 </script>

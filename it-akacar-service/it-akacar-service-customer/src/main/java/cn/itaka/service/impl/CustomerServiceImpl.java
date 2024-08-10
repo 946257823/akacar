@@ -88,14 +88,14 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         initCustomerAssociation(id,password);
 
         // 保存login
-        saveLogin(openId,phone,password,Constants.Login.TYPE_DRIVER);
+        saveLogin(id,openId,phone,password,Constants.Login.TYPE_DRIVER);
 
     }
 
     /**
      * 保存login
      */
-    private void saveLogin(String openId, String phone,String password,Integer type) {
+    private void saveLogin(Long id ,String openId, String phone,String password,Integer type) {
         // 3.3 调用feign接口保存Login
         RegisterSaveLoginParam registerSaveLoginParam = new RegisterSaveLoginParam();
         registerSaveLoginParam.setUsername(phone);
@@ -105,10 +105,11 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         registerSaveLoginParam.setAvatar("");
         registerSaveLoginParam.setAdmin(false);
         String name = NameUtil.getName();
-        registerSaveLoginParam.setNick_name(name);
-        registerSaveLoginParam.setOpen_id(openId);
+        registerSaveLoginParam.setNickName(name);
+        registerSaveLoginParam.setOpenId(openId);
         registerSaveLoginParam.setName(name);
         registerSaveLoginParam.setPhone(phone);
+        registerSaveLoginParam.setId(id);
 
         appLoginFeignClient.save(registerSaveLoginParam);
     }

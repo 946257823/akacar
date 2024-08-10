@@ -533,15 +533,134 @@ var _default = {
       pullOrderTimer: null
     };
   },
-  methods: {},
-  onLoad: function onLoad() {
-    //加载进行中的订单
-    var _this = this;
-  },
-  onShow: function onShow() {
-    var _this = this;
-  },
-  onHide: function onHide() {}
+  methods: {
+    // 语音播报
+    playVoice: function playVoice(src) {
+      var innerAudioContext = uni.createInnerAudioContext();
+      innerAudioContext.autoplay = true;
+      innerAudioContext.src = src;
+      innerAudioContext.play();
+    },
+    // 开始接单
+    startWorkHandle: function startWorkHandle() {
+      var _this = this;
+      _this.post("/driver/app/driver/online", function (res) {
+        var succes = res.succes,
+          message = res.message;
+        if (!success) {
+          uni.showToast({
+            icon: "error",
+            title: "上线失败"
+          });
+        }
+      });
+      uni.setStorageSync("workStatus", _this.Consts.WORK_STATUS.START_ACCPET_ORDER);
+      _this.workStatus._this.Consts.WORK_STATUS.START_ACCPET_ORDER;
+      _this.playVoice("/static/voice/voice_1.mp3");
+    },
+    // 停止接单
+    stopWorkHandle: function stopWorkHandle() {
+      var _this = this;
+      _this.post("/driver/app/driver/offline", function (res) {
+        var succes = res.succes,
+          message = res.message;
+        if (!success) {
+          uni.showToast({
+            icon: "error",
+            title: "下线失败"
+          });
+        }
+      });
+      uni.setStorageSync("workStatus", _this.Consts.WORK_STATUS.STOP_ACCPET_ORDER);
+      _this.workStatus._this.Consts.WORK_STATUS.STOP_ACCPET_ORDER;
+      _this.playVoice("/static/voice/voice_2.mp3");
+    },
+    // 回到当前位置
+    returnLocationHandle: function returnLocationHandle() {
+      var _this = this;
+      _this._mapContext.moveToLocaltion();
+    },
+    //初始化窗口样式
+    initStyle: function initStyle() {
+      var _this = this;
+      //处理窗口样式
+      var windowHeight = uni.getSystemInfoSync().windowHeight;
+      _this.windowHeight = windowHeight - 200;
+      _this.contentStyle = "height:".concat(_this.windowHeight, "px;");
+    },
+    toRealAuth: function toRealAuth() {
+      uni.navigateTo({
+        //跳转实名页面，把司机ID传递过去
+        url: "/identity/filling/filling"
+      });
+    },
+    getDriverRealAuthInfo: function getDriverRealAuthInfo() {
+      var _this = this;
+      _this.get("/driver/app/driver/realAuthInfo", function (res) {
+        var success = res.success,
+          message = res.message,
+          data = res.data;
+        if (success) {
+          if (data != null && data.realAuthStatus == 1) {
+            _this.realAuthSuccess = true;
+          } else {
+            uni.setStorageSync("realAuthSuccess", data);
+            _this.realAuthSuccess = false;
+          }
+        } else {
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+        }
+      });
+    },
+    getDriverDaySummery: function getDriverDaySummery() {
+      var _this = this;
+      _this.get("/driver/app/driver/daySummary", function (res) {
+        var success = res.success,
+          message = res.message,
+          data = res.data;
+        if (success) {
+          _this.summary = data;
+        } else {
+          uni.showToast({
+            icon: "error",
+            title: message
+          });
+        }
+      });
+    },
+    // 初始化地图
+    initMap: function initMap() {
+      var _this = this;
+      // 1.创建map对象
+      this._mapContext = uni.createMapContext("Map", this);
+      // 2.设置初始经纬度
+      uni.getLocation({
+        type: 'wgs84',
+        success: function success(res) {
+          console.log('当前位置的经度：' + res.longitude);
+          console.log('当前位置的纬度：' + res.latitude);
+          _this.location.longitude = res.longitude;
+          _this.location.latitude = res.latitude;
+        }
+      });
+    },
+    onLoad: function onLoad() {
+      //加载进行中的订单
+      var _this = this;
+      _this.initStyle();
+    },
+    onShow: function onShow() {
+      // 查询
+      var _this = this;
+      _this.getDriverRealAuthInfo();
+      _this.getDriverDaySummery();
+      _this.initMap();
+    },
+    onHide: function onHide() {}
+  }
 };
 exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))

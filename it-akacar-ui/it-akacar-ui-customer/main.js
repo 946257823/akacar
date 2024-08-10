@@ -71,14 +71,20 @@ let baseUrl = "http://127.0.0.1:10010/akacar"
 function sendRequest(url,method,sendData,callBack){
 	
 	//uni.showLoading({ title: "请求中..." })
+	const tokenName = uni.getStorageSync("tokenName");
+	const tokenValue = uni.getStorageSync("tokenValue");
+	
+	let header = {}
+	
+	if(tokenName && tokenValue) {
+		header[tokenName] = tokenValue  
+	}
 	
 	uni.request({
 		"url": baseUrl+url,
 		"method": method,
 		"timeout:":10000,
-		"header": {
-			satoken: uni.getStorageSync("tokenValue")
-		},
+		"header": header,
 		"data": sendData,
 		success: function(resp) {
 			if (resp.statusCode == 401) {

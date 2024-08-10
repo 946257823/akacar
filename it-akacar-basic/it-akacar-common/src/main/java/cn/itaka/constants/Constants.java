@@ -76,6 +76,8 @@ public class Constants {
 
         public static final String ORDER_INFO_KEY = "order-info-key-%s";
 
+        public static final String PERMISSION_REDIS_KEY = "permission-key:%s";
+
         public static final String DRIVER_LOCATION_TO_REDIS_KEY = "driver-location-to-redis-key:%s";
     }
 

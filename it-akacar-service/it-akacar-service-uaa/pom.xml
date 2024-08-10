@@ -66,25 +66,7 @@
             <artifactId>it-akacar-common</artifactId>
         </dependency>
 
-        <!--mybatisplus持久层依赖-->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
 
-        </dependency>
-
-        <!-- mysql驱动-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-
-        </dependency><!--mysql依赖-->
-
-        <!--连接池依赖-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-        </dependency>
 
         <!--        API文档管理-->
         <dependency>
@@ -103,5 +85,31 @@
             <groupId>cn.akacar</groupId>
             <artifactId>it-akacar-api-uaa</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-starter-wechat</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-starter-redis</artifactId>
+            <version>${akacar-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-starter-mybatisplus</artifactId>
+            <version>${akacar-version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-start-satoken</artifactId>
+            <version>${akacar-version}</version>
+        </dependency>
+
     </dependencies>
 </project>

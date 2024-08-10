@@ -153,7 +153,7 @@ const router = createRouter({
 //前端登录拦截
 router.beforeEach((to, from, next) => {
 	if (to.name != "Login") {
-		let token = localStorage.getItem("satoken")
+		let token = localStorage.getItem("tokenValue")
 		if (token == null || token == "") {
 			next({
 				name: 'Login'

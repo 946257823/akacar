@@ -70,7 +70,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-
         </dependency>
 
         <!-- mysql驱动-->
@@ -106,6 +105,24 @@
         <dependency>
             <groupId>cn.akacar</groupId>
             <artifactId>it-akacar-api-uaa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-starter-redis</artifactId>
+            <version>${akacar-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-starter-mybatisplus</artifactId>
+            <version>${akacar-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.akacar</groupId>
+            <artifactId>it-akacar-start-satoken</artifactId>
+            <version>${akacar-version}</version>
         </dependency>
     </dependencies>
 
